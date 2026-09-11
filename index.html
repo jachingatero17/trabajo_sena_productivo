@@ -181,7 +181,6 @@
                                         raycaster="objects: #boton-play, #boton-play *, #pantalla-video; far: 30">
                 
             </a-camera>
-            <!-- mandos físicos (Quest, Index, Vive, etc.): apuntar y apretar el gatillo activa el video -->
             
             
         
@@ -200,8 +199,8 @@
         pantallaIntro.style.display = 'none';
         uiEscena.style.display = 'block';
         
-        // Desbloqueo forzado del video para navegadores web
-        video.play().catch(e => console.log("Video listo para reproducción."));
+        // Arranca el video de forma segura al saltarse el bloqueo de seguridad nativo de los navegadores modernos
+        video.play().catch(e => console.log("Video inicializado listo para reproducir"));
     });
 
     function alternarVideo() {
@@ -219,4 +218,3 @@
 </script>
 </body>
 </html>
-
