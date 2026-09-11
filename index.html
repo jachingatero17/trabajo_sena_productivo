@@ -4,9 +4,9 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
 <title>Vitaldata · Experiencia 3D</title>
-<script src="https://aframe.io/releases/1.5.0/aframe.min.js"></script>
+<script src="https://aframe.io"></script>
 <style>
-    @import url('https://fonts.googleapis.com/css2?family=Share+Tech+Mono&family=Orbitron:wght@400;700;900&display=swap');
+    @import url('https://googleapis.com');
 
     :root {
         --verde: #38c172;
@@ -26,7 +26,7 @@
         display: flex; align-items: center; justify-content: center;
     }
     .intro-wrap { text-align: center; color: var(--verde-claro); max-width: 700px; padding: 20px; }
-    .intro-logo { width: 120px; margin-bottom: 10px; filter: drop-shadow(0 0 18px rgba(56,193,114,0.7)); animation: flotar 3s ease-in-out infinite; }
+    .intro-logo { width: clamp(240px, 34vw, 380px); margin-bottom: 10px; filter: drop-shadow(0 0 18px rgba(56,193,114,0.7)); animation: flotar 3s ease-in-out infinite; }
     @keyframes flotar { 0%,100%{transform:translateY(0)} 50%{transform:translateY(-10px)} }
 
     .logo-titulo {
@@ -51,6 +51,7 @@
         font-family: 'Orbitron', sans-serif; font-size: 15px; font-weight: 700;
         letter-spacing: 5px; cursor: pointer; position: relative; overflow: hidden;
         transition: color 0.3s; animation: fadeIn 1s ease 1s both;
+        z-index: 3100;
     }
     .btn-iniciar::before {
         content: ''; position: absolute; inset: 0;
@@ -64,6 +65,7 @@
         position: absolute; top: 0; left: 0; width: 100%; height: 3px;
         background: linear-gradient(90deg, transparent, var(--verde), transparent);
         animation: scan 3s linear infinite;
+        pointer-events: none;
     }
     @keyframes scan { from{top:0} to{top:100%} }
 
@@ -93,7 +95,7 @@
     <div id="pantalla-intro">
         <div class="scan-line"></div>
         <div class="intro-wrap">
-            <img class="intro-logo" src="vitaldata-logo.png" alt="Vitaldata">
+            <img class="intro-logo" src="logo.png" alt="Vitaldata">
             <h1 class="logo-titulo">VITALDATA</h1>
             <div class="sub-titulo">EXPERIENCIA&nbsp;3D&nbsp;·&nbsp;DATOS&nbsp;QUE&nbsp;LATEN</div>
             <button class="btn-iniciar" id="btn-entrar">ENTRAR</button>
@@ -102,20 +104,21 @@
 
     <!-- ══════════════ UI EN ESCENA ══════════════ -->
     <div id="ui-escena">
-        <div id="marca-agua"><img src="vitaldata-logo.png" alt="">VITALDATA</div>
+        <div id="marca-agua"><img src="logo.png" alt="">VITALDATA</div>
         <div id="hint-camara">ARRASTRA PARA MIRAR ALREDEDOR · TOCA LA PANTALLA PARA REPRODUCIR</div>
     </div>
 
     <!-- ══════════════ ESCENA 3D ══════════════ -->
-    <a-scene embedded loading-screen="enabled: false" vr-mode-ui="enabled: false" cursor="rayOrigin: mouse">
+    <a-scene embedded loading-screen="enabled: false" vr-mode-ui="enabled: true">
 
         <a-assets>
-            <video id="video-promo" src="video-promocional.mp4" preload="auto" loop="true" crossorigin="anonymous" playsinline webkit-playsinline></video>
-            <img id="logo-vitaldata" src="vitaldata-logo.png">
+            <img id="logo-vitaldata" src="logo.png">
+            <img id="mascota-vitaldata" src="mascota.png">
+            <video id="video-promo" src="video.mp4" loop="true" muted="true" playsinline crossorigin="anonymous"></video>
         </a-assets>
 
         <a-sky color="#030b08"></a-sky>
-        <a-entity fog="type: exponential; color: #030b08; density: 0.045"></a-entity>
+        
 
         <!-- Luces -->
         <a-light type="ambient" color="#0c3d22" intensity="0.9"></a-light>
@@ -127,30 +130,40 @@
         <a-plane id="piso" rotation="-90 0 0" width="60" height="60" position="0 0 0" material="shader: flat; src: #textura-grilla; repeat: 20 20; color: #061c10"></a-plane>
 
         <!-- ══ PANTALLA CENTRAL CON EL VIDEO ══ -->
-        <a-entity position="0 4.4 -8">
+        
             <!-- Marco -->
             <a-box width="10.6" height="6.2" depth="0.3" color="#04140b" material="metalness:0.6; roughness:0.3"></a-box>
             <a-box width="10.9" height="6.5" depth="0.15" position="0 0 -0.1" color="#38c172" material="emissive:#38c172; emissiveIntensity:0.9"></a-box>
             <!-- Video -->
             <a-video id="pantalla-video" src="#video-promo" width="10" height="5.6" position="0 0 0.2"></a-video>
             <!-- Botón play -->
-            <a-entity id="boton-play" position="0 0 0.6" class="clickable">
+            
                 <a-circle radius="0.8" color="#04140b" opacity="0.75" material="side: double"></a-circle>
                 <a-triangle vertices="-0.25 -0.4 0.05, -0.25 0.4 0.05, 0.45 0 0.05" color="#7fe3a3" material="emissive:#7fe3a3; emissiveIntensity:0.8"></a-triangle>
-            </a-entity>
-        </a-entity>
+            
+        
 
-        <!-- Logo flotante lateral -->
-        <a-image src="#logo-vitaldata" width="1.6" height="1.6" position="-7 5.5 -6" transparent="true"
-            animation="property: position; to: -7 6 -6; dir: alternate; dur: 2200; loop: true; easing: easeInOutSine"
-            animation__rot="property: rotation; to: 0 360 0; dur: 12000; loop: true; easing: linear">
-        </a-image>
+        <!-- ══ MASCOTA "VITI" EN PRIMER PLANO ══ -->
+        
+            <a-circle radius="1.6" rotation="-90 0 0" position="0 0.03 0" color="#000000" opacity="0.4" material="transparent: true; side: double; shader: flat"></a-circle>
+            <a-image src="#mascota-vitaldata" width="5.4" height="6.5" position="0 3.25 0" transparent="true"
+                animation="property: position; to: 0 3.4 0; dir: alternate; dur: 2800; loop: true; easing: easeInOutSine">
+            </a-image>
+        
+
+        <!-- ══ LOGO DENTRO DE UN CUBO FLOTANTE (izquierda) ══ -->
+        
+            <a-box width="3.8" height="3.8" depth="3.8" color="#04140b" opacity="0.28" transparent="true" material="metalness:0.7; roughness:0.2; side: double"></a-box>
+            <a-box width="3.83" height="3.83" depth="3.83" wireframe="true" color="#38c172" material="wireframeLinewidth:2"></a-box>
+            <a-image src="#logo-vitaldata" width="3.05" height="2.53" position="0 0 0" transparent="true"></a-image>
+            <a-image src="#logo-vitaldata" width="3.05" height="2.53" position="0 0 -0.02" rotation="0 180 0" transparent="true"></a-image>
+        
 
         <!-- ══ LÍNEA DE PULSO (ECG) frente a la pantalla ══ -->
-        <a-entity id="linea-pulso" position="0 0.05 -3" pulso-ecg></a-entity>
+        
 
         <!-- ══ PARTÍCULAS DE DATOS FLOTANTES ══ -->
-        <a-entity id="particulas" particulas-datos="cantidad: 45"></a-entity>
+        
 
         <!-- Columnas decorativas tipo centro de datos -->
         <a-box position="-10 2 -8" width="0.6" height="4" depth="0.6" color="#04140b" material="emissive:#38c172; emissiveIntensity:0.25"></a-box>
@@ -158,97 +171,12 @@
         <a-box position="-10 2 2" width="0.6" height="4" depth="0.6" color="#04140b" material="emissive:#38c172; emissiveIntensity:0.25"></a-box>
         <a-box position="10 2 2" width="0.6" height="4" depth="0.6" color="#04140b" material="emissive:#38c172; emissiveIntensity:0.25"></a-box>
 
-        <!-- ══ CÁMARA: sin desplazamiento, mirar libre ══ -->
-        <a-entity id="rig-camara" position="0 4.4 4">
-            <a-camera look-controls="reverseMouseDrag: false" wasd-controls="enabled: false"
-                cursor="rayOrigin: mouse; fuse: false"
-                raycaster="objects: #boton-play, #boton-play *">
-            </a-camera>
-        </a-entity>
-
-    </a-scene>
-
-<script>
-    /* ══ Componente: grilla generada por canvas para el piso ══ */
-    (function crearTexturaGrilla() {
-        const canvas = document.createElement('canvas');
-        canvas.width = 512; canvas.height = 512;
-        const ctx = canvas.getContext('2d');
-        ctx.fillStyle = '#061c10'; ctx.fillRect(0, 0, 512, 512);
-        ctx.strokeStyle = 'rgba(56,193,114,0.55)'; ctx.lineWidth = 2;
-        for (let i = 0; i <= 512; i += 64) {
-            ctx.beginPath(); ctx.moveTo(i, 0); ctx.lineTo(i, 512); ctx.stroke();
-            ctx.beginPath(); ctx.moveTo(0, i); ctx.lineTo(512, i); ctx.stroke();
-        }
-        canvas.id = 'canvas-grilla';
-        const img = document.createElement('img');
-        img.id = 'textura-grilla';
-        img.src = canvas.toDataURL();
-        document.querySelector('a-assets').appendChild(img);
-    })();
-
-    /* ══ Componente: partículas de datos flotando ══ */
-    AFRAME.registerComponent('particulas-datos', {
-        schema: { cantidad: { type: 'number', default: 40 } },
-        init: function () {
-            const colores = ['#38c172', '#7fe3a3', '#ffffff'];
-            for (let i = 0; i < this.data.cantidad; i++) {
-                const p = document.createElement('a-entity');
-                const x = (Math.random() - 0.5) * 22;
-                const y = 0.5 + Math.random() * 7;
-                const z = -1 - Math.random() * 14;
-                const s = 0.05 + Math.random() * 0.09;
-                const dur = 2500 + Math.random() * 3000;
-                const color = colores[Math.floor(Math.random() * colores.length)];
-                p.setAttribute('geometry', `primitive: box; width:${s}; height:${s}; depth:${s}`);
-                p.setAttribute('material', `color:${color}; emissive:${color}; emissiveIntensity:0.9`);
-                p.setAttribute('position', `${x} ${y} ${z}`);
-                p.setAttribute('animation', `property: position; to: ${x} ${y + 0.6} ${z}; dir: alternate; dur: ${dur}; loop: true; easing: easeInOutSine`);
-                p.setAttribute('animation__rot', `property: rotation; to: 360 360 0; dur: ${dur * 2}; loop: true; easing: linear`);
-                this.el.appendChild(p);
-            }
-        }
-    });
-
-    /* ══ Componente: línea de pulso tipo ECG animada ══ */
-    AFRAME.registerComponent('pulso-ecg', {
-        init: function () {
-            const puntos = [
-                [-6, 0], [-5, 0], [-4.3, 0], [-4, 1.4], [-3.7, -1.2], [-3.3, 0], [-2.6, 0],
-                [-1.8, 0], [-1.5, 1.4], [-1.2, -1.2], [-0.8, 0], [0, 0],
-                [0.8, 0], [1.2, -1.2], [1.5, 1.4], [1.8, 0], [2.6, 0],
-                [3.3, 0], [3.7, -1.2], [4, 1.4], [4.3, 0], [5, 0], [6, 0]
-            ];
-            let segStr = 'M ' + puntos.map(p => p[0] + ',' + p[1]).join(' L ');
-            for (let i = 0; i < puntos.length - 1; i++) {
-                const a = puntos[i], b = puntos[i + 1];
-                const seg = document.createElement('a-entity');
-                seg.setAttribute('line', `start: ${a[0]} ${a[1] * 0.3} 0; end: ${b[0]} ${b[1] * 0.3} 0; color: #38c172`);
-                seg.setAttribute('animation__pulso', `property: line.color; type: color; from: #0c3d22; to: #7fe3a3; dir: alternate; dur: 900; loop: true; delay: ${i * 60}`);
-                this.el.appendChild(seg);
-            }
-        }
-    });
-
-    /* ══ Control de intro y video ══ */
-    const btnEntrar = document.getElementById('btn-entrar');
-    const pantallaIntro = document.getElementById('pantalla-intro');
-    const uiEscena = document.getElementById('ui-escena');
-    const video = document.getElementById('video-promo');
-    const botonPlay = document.getElementById('boton-play');
-
-    btnEntrar.addEventListener('click', () => {
-        pantallaIntro.style.display = 'none';
-        uiEscena.style.display = 'block';
-    });
-
-    function alternarVideo() {
-        if (video.paused) { video.play(); botonPlay.setAttribute('visible', 'false'); }
-        else { video.pause(); botonPlay.setAttribute('visible', 'true'); }
-    }
-    botonPlay.addEventListener('click', alternarVideo);
-    document.getElementById('pantalla-video').addEventListener('click', alternarVideo);
-    video.addEventListener('ended', () => botonPlay.setAttribute('visible', 'true'));
-</script>
-</body>
-</html>
+        <!-- ══ CÁMARA ══ -->
+        
+            <a-camera look-controls="reverseMouseDrag: false" wasd-controls="enabled: false">
+                
+                
+                <a-entity cursor="fuse: true; fuseTimeout: 1200"
+                    position="0 0 -1"
+                    geometry="primitive: ring; radiusInner: 0.006; radiusOuter: 0.012; segmentsTheta: 32"
+                    material="color: #7fe3a3; shader: flat; opacity: 0.9; side: double"
